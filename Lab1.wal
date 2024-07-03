@@ -1,0 +1,34 @@
+�defVar --name file --type Excel
+defVar --name file_cell_E9 --type String
+defVar --name text_from_browser --type String
+defVar --name email_connection --type EmailConnection
+defVar --name email_address --type List --innertype String --value "[cguillen@ibm.com,jpbarran@cr.ibm.com,rocorder@cr.ibm.com]"
+defVar --name renamed_file --type String
+defVar --name files --type List --innertype String --value "[C:\\Users\\rpauser9\\Downloads\\Laboratorio 1 IBM RPA-7-3-24.xlsx]"
+excelOpen --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 1 IBM RPA.xlsx" file=value
+excelGet --file ${file} --getfirstsheet  --usingcell  --cell E9 file_cell_E9=value
+logMessage --message "${file_cell_E9}" --type "Info"
+webStart --name browser --type "Edge" --userprofilepreferences "AutomationOptimized" --downloadpath "C:\\Users\\rpauser9\\AppData\\Local\\IBM Robotic Process Automation\\downloads"
+webNavigate --url "${file_cell_E9}"
+webWaitElement --selector "Id" --id credsDiv --timeout "00:00:05" --comment "IBM email address (e.g. jdoe@ibm.com)"
+webClick --selector "Id" --id credsDiv --simulatehuman  --comment "IBM email address (e.g. jdoe@ibm.com)"
+webWaitElement --selector "Id" --id "user-name-input" --timeout "00:00:05" --comment "IBM email address (e.g. jdoe@ibm.com)"
+webSet --value "cguillen@ibm.com" --selector "Id" --id "user-name-input" --comment "IBM email address (e.g. jdoe@ibm.com)"
+webSet --value "{secret}" --selector "Id" --id "password-input" --comment Password
+webClick --selector "Id" --id "login-button" --comment "Sign in"
+webWaitElement --selector "CssSelector" --css "html > body > div:nth-child(1) > div > article > div > div > div > div:nth-child(4) > div > div > div > div > div > div:nth-child(2) > div > a" --timeout "00:00:05" --comment AQUÍ
+webClick --selector "CssSelector" --css "html > body > div:nth-child(1) > div > article > div > div > div > div:nth-child(4) > div > div > div > div > div > div:nth-child(2) > div > a" --comment AQUÍ
+webWaitElement --selector "CssSelector" --css "html > body > div:nth-child(1) > div > article > div > div > div > div:nth-child(4) > div > div > div > div > div > div:nth-child(2) > div > a" --timeout "00:00:05" --comment AQUÍ
+webClick --selector "CssSelector" --css "html > body > div:nth-child(1) > div > article > div > div > div > div:nth-child(4) > div > div > div > div > div > div:nth-child(2) > div > a" --comment AQUÍ
+webWaitElement --selector "CssSelector" --css "#siteView > article > div > div > div > div:nth-child(2) > div.ds-col-7 > div > p > p"
+webGet --selector "CssSelector" --css "#siteView > article > div > div > div > div:nth-child(2) > div.ds-col-7 > div > p > p" text_from_browser=value
+logMessage --message "Texto obtenido ${text_from_browser}" --type "Info"
+webClose --name browser
+excelSet --value "${text_from_browser}" --file ${file} --sheet Output --usingcell  --cell C2
+logMessage --message "Se seteo el valor ${text_from_browser}" --type "Info"
+excelClose --file ${file} --save 
+fileRename --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 1 IBM RPA.xlsx" --newname "C:\\Users\\rpauser9\\Downloads\\Laboratorio 1 IBM RPA-7-3-24.xlsx" renamed_file=value
+logMessage --message "Closing file" --type "Info"
+logMessage --message "Se guardo el nuevo archivo" --type "Info"
+smtpConnect --smtphost "us.relay.ibm.com" --smtpport 25 --authenticationtype "BasicAuthentication" email_connection=value
+emailSend --connection ${email_connection} --to ${email_address} --from "ai_and_automation_academy@ibm.com" --subject "Lab1 de Cristian Guillen" --bodytype "Text" --body "Lab1 de Cristian Guillen" --attachments ${files}*	23.0.16.0
