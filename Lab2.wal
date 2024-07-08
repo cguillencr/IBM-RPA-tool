@@ -1,0 +1,49 @@
+defVar --name file --type Excel
+defVar --name file_cell_E9 --type String
+defVar --name email_connection --type EmailConnection
+defVar --name email_address --type List --innertype String --value "[cguillen@ibm.com]"
+defVar --name files --type List --innertype String --value "[C:\\Users\\rpauser9\\Downloads\\Laboratorio 1 IBM RPA-7-3-24.xlsx]"
+defVar --name dt --type DataTable
+defVar --name http_response_text --type String
+defVar --name row_name --type String
+defVar --name row_region --type String
+defVar --name row_subregion --type String
+defVar --name iterator --type Numeric
+defVar --name row_name_json --type String
+defVar --name dt_names --type DataTable
+defVar --name row_continents_json --type String
+defVar --name dt_continent --type DataTable
+defVar --name row_continent --type String
+defVar --name row_timezones_json --type String
+defVar --name dt_timezone --type DataTable
+defVar --name row_timezone --type String
+defVar --name dt_capital --type DataTable
+defVar --name row_capital_json --type String
+defVar --name row_capital --type String
+defVar --name row_population0 --type Numeric
+defVar --name dt_names_rows --type Numeric
+defVar --name dat2 --type DataTable
+excelOpen --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA.xlsx" file=value
+excelGet --file ${file} --getfirstsheet  --usingcell  --cell E9 file_cell_E9=value
+logMessage --message "${file_cell_E9}" --type "Info"
+httpRequest --verb "Get" --url "${file_cell_E9}" http_response_text=value
+jsonToTable --json "${http_response_text}" --jsonPath "$" dt=value
+for --variable ${iterator} --from 1 --to 5 --step 1
+	mapTableRow --dataTable ${dt} --row ${iterator} --mappings "[{\"Name\":\"name\",\"Number\":\"1\",\"Output\":\"${row_name_json}\"},{\"Name\":\"region\",\"Number\":\"2\",\"Output\":\"${row_region}\"},{\"Name\":\"subregion\",\"Number\":\"3\",\"Output\":\"${row_subregion}\"},{\"Name\":\"continents\",\"Number\":\"4\",\"Output\":\"${row_continents_json}\"},{\"Name\":\"timezones\",\"Number\":\"5\",\"Output\":\"${row_timezones_json}\"},{\"Name\":\"capital\",\"Number\":\"6\",\"Output\":\"${row_capital_json}\"},{\"Name\":\"population\",\"Number\":\"7\",\"Output\":\"${row_population0}\"}]"
+	jsonToTable --json "${row_name_json}" --jsonPath "$" --comment "json name" dt_names=value
+	mapTableRow --dataTable ${dt_names} --row 1 --mappings "[{\"Name\":\"\",\"Number\":\"1\",\"Output\":\"${row_name}\"}]" --comment "json name map"
+	jsonToTable --json "${row_continents_json}" --jsonPath "$" --comment "json continent" dt_continent=value
+	mapTableRow --dataTable ${dt_continent} --row 1 --mappings "[{\"Name\":\"\",\"Number\":\"1\",\"Output\":\"${row_continent}\"}]" --comment "json continent map"
+	jsonToTable --json "${row_timezones_json}" --jsonPath "$" --comment "json timezone" dt_timezone=value
+	mapTableRow --dataTable ${dt_timezone} --row 1 --mappings "[{\"Name\":\"\",\"Number\":\"1\",\"Output\":\"${row_timezone}\"}]" --comment "json timezonemap"
+	jsonToTable --json "${row_capital_json}" --jsonPath "$" --comment "json capital" dt_capital=value
+	mapTableRow --dataTable ${dt_capital} --row 1 --mappings "[{\"Name\":\"\",\"Number\":\"1\",\"Output\":\"${row_capital}\"}]" --comment "json capital"
+	logMessage --message "Name> ${row_name}  -  capital> ${row_capital}  -Region> ${row_region}  -subregion> ${row_subregion}  -Population> ${row_population0}  -Timezone> ${row_timezone}  -Continent> ${row_continent}" --type "Info"
+	addRow --valuesmapping "{\"name\":\"${row_name}\",\"region\":\"${row_region}\",\"capital\":\"${row_capital}\",\"region\":\"${row_subregion}\",\"continent\":\"${dt_continent}\",\"timezone\":\"${row_timezone}\",\"population\":\"${row_population0}\"}" --dataTable ${dat2}
+next
+logMessage --message "Cerrar excel" --type "Info"
+excelSetTable --dataTable ${dat2} --file ${file} --sheet Output --row 1 --column 1
+logMessage --message "Guardar output" --type "Info"
+excelClose --file ${file} --save
+logMessage --message "Enviar email" --type "Info"
+emailSend --connection ${email_connection} --to ${email_address} --from "ai_and_automation_academy@ibm.com" --subject "Lab2 de Cristian Guillen" --bodytype "Text" --body "Lab2 de Cristian Guillen" --attachments ${files}
