@@ -39,10 +39,10 @@ for --variable ${iterator} --from 1 --to 5 --step 1
 	jsonToTable --json "${row_capital_json}" --jsonPath "$" --comment "json capital" dt_capital=value
 	mapTableRow --dataTable ${dt_capital} --row 1 --mappings "[{\"Name\":\"\",\"Number\":\"1\",\"Output\":\"${row_capital}\"}]" --comment "json capital"
 	logMessage --message "Name> ${row_name}  -  capital> ${row_capital}  -Region> ${row_region}  -subregion> ${row_subregion}  -Population> ${row_population0}  -Timezone> ${row_timezone}  -Continent> ${row_continent}" --type "Info"
-	addRow --valuesmapping "{\"name\":\"${row_name}\",\"region\":\"${row_region}\",\"capital\":\"${row_capital}\",\"region\":\"${row_subregion}\",\"continent\":\"${dt_continent}\",\"timezone\":\"${row_timezone}\",\"population\":\"${row_population0}\"}" --dataTable ${dat2}
+	addRow --valuesmapping "{\"name\":\"${row_name}\",\"region\":\"${row_region}\",\"capital\":\"${row_capital}\",\"region\":\"${row_subregion}\",\"continent\":\"${dt_continent}\",\"timezone\":\"${row_timezone}\",\"population\":\"${row_population0}\"}" --dataTable ${dt}
 next
 logMessage --message "Cerrar excel" --type "Info"
-excelSetTable --dataTable ${dat2} --file ${file} --sheet Output --row 1 --column 1
+excelSetTable --dataTable ${dt} --file ${file} --sheet Output --row 1 --column 1
 logMessage --message "Guardar output" --type "Info"
 excelClose --file ${file} --save
 logMessage --message "Enviar email" --type "Info"
