@@ -22,7 +22,7 @@ defVar --name row_capital --type String
 defVar --name row_population0 --type Numeric
 defVar --name row --type Numeric --value 2
 defVar --name renamed_file --type String
-defVar --name uploads --type List --innertype String --value "[C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA2-7-9-24.xlsx]"
+defVar --name uploads --type List --innertype String --value "[C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA7-9-24.xlsx]"
 defVar --name dt_official_names --type DataTable
 defVar --name dt_elemets --type DataTable
 defVar --name amount_of_elements --type Numeric
@@ -56,6 +56,6 @@ next
 logMessage --message "Guardar output" --type "Info"
 excelClose --file ${file} --save
 logMessage --message "Enviar email" --type "Info"
-fileRename --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA2.xlsx" --newname "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA2-7-9-24.xlsx" renamed_file=value
+fileRename --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA.xlsx" --newname "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA7-9-24.xlsx" renamed_file=value
 smtpConnect --smtphost "us.relay.ibm.com" --smtpport 25 --authenticationtype "BasicAuthentication" email_connection=value
 emailSend --connection ${email_connection} --to ${email_address} --from "ai_and_automation_academy@ibm.com" --subject "Lab 2 Cristian Guillen" --bodytype "Text" --body "Lab 2. Con el fix para incluir todos los paises." --attachments ${uploads}
