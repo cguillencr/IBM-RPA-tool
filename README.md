@@ -8,7 +8,7 @@ In this script, you can see how the robot accesses an internal webpage, collects
 
 ## Lab 2 - Data Processing and Report Generation
 
-This lab demonstrates a more complex use case where the robot processes a dataset, performs data analysis, and generates a comprehensive report. The `Lab2-Demo.mov` file showcases the full execution of this script.
+In Lab2, the information from this endpoint https://restcountries.com/v3.1/region/america is read and saved into an Excel file.
 
 ## Benefits of IBM RPA
 
