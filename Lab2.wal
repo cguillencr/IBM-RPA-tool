@@ -2,7 +2,6 @@ defVar --name file --type Excel
 defVar --name file_cell_E9 --type String
 defVar --name email_connection --type EmailConnection
 defVar --name email_address --type List --innertype String --value "[cguillen@ibm.com,jpbarran@cr.ibm.com,rocorder@cr.ibm.com]"
-defVar --name files --type List --innertype String --value "[C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA.xlsx]"
 defVar --name dt --type DataTable
 defVar --name http_response_text --type String
 defVar --name row_name --type String
@@ -21,18 +20,19 @@ defVar --name dt_capital --type DataTable
 defVar --name row_capital_json --type String
 defVar --name row_capital --type String
 defVar --name row_population0 --type Numeric
-defVar --name dt_names_rows --type Numeric
-defVar --name dat2 --type DataTable
-defVar --name email_connection_2 --type EmailConnection
 defVar --name row --type Numeric --value 2
 defVar --name renamed_file --type String
 defVar --name uploads --type List --innertype String --value "[C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA2-7-9-24.xlsx]"
+defVar --name dt_official_names --type DataTable
+defVar --name dt_elemets --type DataTable
+defVar --name amount_of_elements --type Numeric
 excelOpen --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA.xlsx" file=value
 excelGet --file ${file} --getfirstsheet  --usingcell  --cell E9 file_cell_E9=value
 logMessage --message "${file_cell_E9}" --type "Info"
 httpRequest --verb "Get" --url "${file_cell_E9}" http_response_text=value
 jsonToTable --json "${http_response_text}" --jsonPath "$" dt=value
-for --variable ${iterator} --from 1 --to 5 --step 1
+countTextOccurrences --text "${http_response_text}" --query "\"nativeName\"" --startindex 1 amount_of_elements=value
+for --variable ${iterator} --from 1 --to ${amount_of_elements} --step 1
 	mapTableRow --dataTable ${dt} --row ${iterator} --mappings "[{\"Name\":\"name\",\"Number\":\"1\",\"Output\":\"${row_name_json}\"},{\"Name\":\"region\",\"Number\":\"2\",\"Output\":\"${row_region}\"},{\"Name\":\"subregion\",\"Number\":\"3\",\"Output\":\"${row_subregion}\"},{\"Name\":\"continents\",\"Number\":\"4\",\"Output\":\"${row_continents_json}\"},{\"Name\":\"timezones\",\"Number\":\"5\",\"Output\":\"${row_timezones_json}\"},{\"Name\":\"capital\",\"Number\":\"6\",\"Output\":\"${row_capital_json}\"},{\"Name\":\"population\",\"Number\":\"7\",\"Output\":\"${row_population0}\"}]"
 	jsonToTable --json "${row_name_json}" --jsonPath "$" --comment "json name" dt_names=value
 	mapTableRow --dataTable ${dt_names} --row 1 --mappings "[{\"Name\":\"\",\"Number\":\"1\",\"Output\":\"${row_name}\"}]" --comment "json name map"
@@ -58,4 +58,4 @@ excelClose --file ${file} --save
 logMessage --message "Enviar email" --type "Info"
 fileRename --file "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA2.xlsx" --newname "C:\\Users\\rpauser9\\Downloads\\Laboratorio 2 IBM RPA2-7-9-24.xlsx" renamed_file=value
 smtpConnect --smtphost "us.relay.ibm.com" --smtpport 25 --authenticationtype "BasicAuthentication" email_connection=value
-emailSend --connection ${email_connection} --to ${email_address} --from "ai_and_automation_academy@ibm.com" --subject "Lab 2 Cristian Guillen" --bodytype "Text" --body "Lab 2" --attachments ${uploads}
+emailSend --connection ${email_connection} --to ${email_address} --from "ai_and_automation_academy@ibm.com" --subject "Lab 2 Cristian Guillen" --bodytype "Text" --body "Lab 2. Con el fix para incluir todos los paises." --attachments ${uploads}
